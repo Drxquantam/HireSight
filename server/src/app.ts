@@ -30,3 +30,5 @@ app.use("/api/resume", resumeRoutes);
 app.use("/api/job", jobRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use(errorHandler);
+
+export default app;
