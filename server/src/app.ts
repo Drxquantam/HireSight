@@ -1,12 +1,15 @@
 import cors from "cors";
 import express from "express";
-import helmet from "helmet";
+import { createRequire } from "node:module";
+import type { RequestHandler } from "express";
 import { env } from "./config/env.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { jobRoutes } from "./routes/jobRoutes.js";
 import { resumeRoutes } from "./routes/resumeRoutes.js";
 
 export const app = express();
+const require = createRequire(import.meta.url);
+const helmet = require("helmet") as () => RequestHandler;
 
 app.use(helmet());
 app.use(express.json({ limit: "15mb" }));
