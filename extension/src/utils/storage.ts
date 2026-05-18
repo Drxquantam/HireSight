@@ -1,7 +1,7 @@
 import type { ExtensionSettings } from "../types";
 
 const DEFAULT_SETTINGS: ExtensionSettings = {
-  backendUrl: "http://localhost:4000",
+ backendUrl: "https://hiresight-backend.vercel.app",
   userId: "local-user"
 };
 
