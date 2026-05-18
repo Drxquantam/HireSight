@@ -26,6 +26,14 @@ app.get("/health", (_req, res) => {
   res.json({ ok: true, service: "hiresight-server" });
 });
 
+app.get("/", (_req, res) => {
+  res.json({
+    ok: true,
+    service: "HireSight API",
+    health: "/health"
+  });
+});
+
 app.use("/api/resume", resumeRoutes);
 app.use("/api/job", jobRoutes);
 app.use("/api/jobs", jobRoutes);
