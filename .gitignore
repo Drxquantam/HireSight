@@ -5,4 +5,5 @@ dist
 *.log
 coverage
 .turbo
-
+server/.env
+playground-*.mongodb.js
