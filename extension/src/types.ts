@@ -12,6 +12,19 @@ export type AiAnalysis = {
   confidence: number;
 };
 
+export type CompanyPrep = {
+  companyOverview: string;
+  mission: string;
+  whatTheyDo: string;
+  productsOrServices: string[];
+  businessModel: string;
+  rolePrepTopics: string[];
+  interviewQuestions: string[];
+  talkingPoints: string[];
+  whyThisCompanyAnswer: string;
+  confidence: number;
+};
+
 export type SavedJob = AiAnalysis & {
   _id: string;
   url: string;

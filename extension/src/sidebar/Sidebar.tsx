@@ -1,15 +1,18 @@
-import { Bookmark, BriefcaseBusiness, CheckCircle2, Rocket, ShieldCheck, X } from "lucide-react";
-import type { AiAnalysis, ExtractedJob } from "../types";
+import { Bookmark, BriefcaseBusiness, CheckCircle2, Rocket, ShieldCheck, Sparkles, X } from "lucide-react";
+import type { AiAnalysis, CompanyPrep, ExtractedJob } from "../types";
 import { LoadingSkeleton } from "../components/LoadingSkeleton";
 import { ScoreRing } from "../components/ScoreRing";
 
 type Props = {
   job: ExtractedJob;
   analysis: AiAnalysis | null;
+  companyPrep: CompanyPrep | null;
   loading: boolean;
+  prepLoading: boolean;
   error: string | null;
   saved: boolean;
   onAnalyze: () => void;
+  onPrepare: () => void;
   onSave: () => void;
   onClose: () => void;
 };
@@ -40,7 +43,16 @@ function Section({ title, items }: { title: string; items: string[] }) {
   );
 }
 
-export function Sidebar({ job, analysis, loading, error, saved, onAnalyze, onSave, onClose }: Props) {
+function TextSection({ title, body }: { title: string; body: string }) {
+  return (
+    <section className="rounded-lg border border-slate-700 bg-slate-900 p-4">
+      <h3 className="mb-2 text-sm font-semibold text-white">{title}</h3>
+      <p className="text-sm leading-6 text-slate-200">{body}</p>
+    </section>
+  );
+}
+
+export function Sidebar({ job, analysis, companyPrep, loading, prepLoading, error, saved, onAnalyze, onPrepare, onSave, onClose }: Props) {
   return (
     <aside className="fixed right-4 top-4 z-[2147483647] h-[calc(100vh-32px)] w-[380px] max-w-[calc(100vw-32px)] animate-[slideIn_.24s_ease-out] overflow-hidden rounded-xl border border-slate-700 bg-slate-950 text-slate-100 shadow-2xl">
       <style>{`@keyframes slideIn{from{transform:translateX(28px);opacity:.4}to{transform:translateX(0);opacity:1}}`}</style>
@@ -53,7 +65,7 @@ export function Sidebar({ job, analysis, loading, error, saved, onAnalyze, onSav
                 HireSight
               </div>
               <h2 className="mt-2 line-clamp-2 text-lg font-bold text-white">{job.title}</h2>
-              <p className="mt-1 text-xs text-slate-300">{job.company} Â· {job.source}</p>
+              <p className="mt-1 text-xs text-slate-300">{job.company} · {job.source}</p>
             </div>
             <button className="rounded-md p-2 text-slate-300 hover:bg-slate-800" onClick={onClose} aria-label="Close">
               <X className="h-4 w-4" />
@@ -82,7 +94,7 @@ export function Sidebar({ job, analysis, loading, error, saved, onAnalyze, onSav
                 <div className="flex items-center gap-4">
                   <ScoreRing score={analysis.matchScore} />
                   <div>
-                      <div className="inline-flex items-center gap-2 rounded-full bg-indigo-900 px-3 py-1 text-xs font-medium text-indigo-100">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-indigo-900 px-3 py-1 text-xs font-medium text-indigo-100">
                       <ShieldCheck className="h-3.5 w-3.5" />
                       {analysis.finalRecommendation}
                     </div>
@@ -102,6 +114,23 @@ export function Sidebar({ job, analysis, loading, error, saved, onAnalyze, onSav
               <Section title="Resume Bullet Rewrite Suggestions" items={analysis.resumeBulletSuggestions} />
               <Section title="Likely Interview Topics" items={analysis.interviewTopics} />
               <Section title="Role-Specific Projects" items={analysis.projectRecommendations} />
+              <button className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-500/40 bg-blue-950 px-4 py-3 text-sm font-semibold text-blue-100 transition hover:-translate-y-0.5 hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-60" disabled={prepLoading} onClick={onPrepare}>
+                <Sparkles className="h-4 w-4" />
+                {prepLoading ? "Preparing company research..." : "Prepare for Interview"}
+              </button>
+            </>
+          )}
+          {companyPrep && (
+            <>
+              <TextSection title="Company Overview" body={companyPrep.companyOverview} />
+              <TextSection title="What They Do" body={companyPrep.whatTheyDo} />
+              <TextSection title="Mission / Values" body={companyPrep.mission} />
+              <Section title="Products or Services" items={companyPrep.productsOrServices} />
+              <TextSection title="Business Model" body={companyPrep.businessModel} />
+              <Section title="Role-Specific Prep" items={companyPrep.rolePrepTopics} />
+              <Section title="Likely Interview Questions" items={companyPrep.interviewQuestions} />
+              <Section title="Talking Points" items={companyPrep.talkingPoints} />
+              <TextSection title="Why This Company Answer" body={companyPrep.whyThisCompanyAnswer} />
             </>
           )}
         </main>

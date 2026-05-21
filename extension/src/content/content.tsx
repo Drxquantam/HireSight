@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import styles from "../styles.css?inline";
-import { analyzeJob, saveJob } from "../utils/api";
+import { analyzeJob, prepareCompany, saveJob } from "../utils/api";
 import { extractCurrentJob } from "../utils/extractJob";
-import type { AiAnalysis, ExtractedJob } from "../types";
+import type { AiAnalysis, CompanyPrep, ExtractedJob } from "../types";
 import { Sidebar } from "../sidebar/Sidebar";
 
 function ContentApp() {
   const [job, setJob] = useState(() => extractCurrentJob());
   const [open, setOpen] = useState(job.description.length > 500);
   const [analysis, setAnalysis] = useState<AiAnalysis | null>(null);
+  const [companyPrep, setCompanyPrep] = useState<CompanyPrep | null>(null);
   const [loading, setLoading] = useState(false);
+  const [prepLoading, setPrepLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,6 +20,7 @@ function ContentApp() {
     const freshJob = jobOverride ?? extractCurrentJob();
     setJob(freshJob);
     setSaved(false);
+    setCompanyPrep(null);
     setLoading(true);
     setError(null);
     try {
@@ -26,6 +29,20 @@ function ContentApp() {
       setError(cause instanceof Error ? cause.message : "Unable to analyze this job.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function runCompanyPrep() {
+    const freshJob = extractCurrentJob();
+    setJob(freshJob);
+    setPrepLoading(true);
+    setError(null);
+    try {
+      setCompanyPrep(await prepareCompany(freshJob, analysis));
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to prepare company research.");
+    } finally {
+      setPrepLoading(false);
     }
   }
 
@@ -61,10 +78,13 @@ function ContentApp() {
     <Sidebar
       job={job}
       analysis={analysis}
+      companyPrep={companyPrep}
       loading={loading}
+      prepLoading={prepLoading}
       error={error}
       saved={saved}
       onAnalyze={runAnalysis}
+      onPrepare={runCompanyPrep}
       onSave={persistJob}
       onClose={() => setOpen(false)}
     />

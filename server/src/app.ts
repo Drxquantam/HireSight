@@ -4,6 +4,7 @@ import { createRequire } from "node:module";
 import type { RequestHandler } from "express";
 import { env } from "./config/env.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+import { companyRoutes } from "./routes/companyRoutes.js";
 import { jobRoutes } from "./routes/jobRoutes.js";
 import { resumeRoutes } from "./routes/resumeRoutes.js";
 
@@ -15,7 +16,7 @@ app.use(helmet());
 app.use(express.json({ limit: "15mb" }));
 app.use(
   cors({
-    origin(origin, callback) {
+    origin(_origin, callback) {
       callback(null, true);
     },
     credentials: false
@@ -37,6 +38,7 @@ app.get("/", (_req, res) => {
 app.use("/api/resume", resumeRoutes);
 app.use("/api/job", jobRoutes);
 app.use("/api/jobs", jobRoutes);
+app.use("/api/company", companyRoutes);
 app.use(errorHandler);
 
 export default app;

@@ -1,4 +1,4 @@
-import type { AiAnalysis, ExtractedJob, SavedJob } from "../types";
+import type { AiAnalysis, CompanyPrep, ExtractedJob, SavedJob } from "../types";
 import { getSettings } from "./storage";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -42,6 +42,19 @@ export async function analyzeJob(job: ExtractedJob) {
   return request<AiAnalysis>("/api/job/analyze", {
     method: "POST",
     body: JSON.stringify(job)
+  });
+}
+
+export async function prepareCompany(job: ExtractedJob, analysis: AiAnalysis | null) {
+  return request<CompanyPrep>("/api/company/prepare", {
+    method: "POST",
+    body: JSON.stringify({
+      companyName: analysis?.companyName || job.company,
+      jobTitle: analysis?.jobTitle || job.title,
+      jobDescription: job.description,
+      matchedSkills: analysis?.matchedSkills ?? [],
+      missingSkills: analysis?.missingSkills ?? []
+    })
   });
 }
 
